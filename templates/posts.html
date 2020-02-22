@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Posts</title>
+    </head>
+    <body>
+	{% for post in posts %}
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.text }}</p>
+	{% endfor %}
+    {% if not posts %}
+        <p>No Results Found</p>
+    {% endif %}
+    <div>
+        <ul>
+            {% if previous_page %}
+            <li>
+                <a title="Previous" href="{{ previous_page }}">←</a>
+            </li>
+            {% endif %}
+            {% for page_name, page_link in pages_links.items %}
+            <li>
+                <a title="{{ page_name }}" href="{{ page_link }}">{{page_name}}</a>
+            </li>
+            {% endfor %}
+            {% if next_page %}
+            <li>
+                <a title="Next" href="{{ next_page }}">→</a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </div>
+    </body>
+
+  </div>
+</html>
