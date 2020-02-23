@@ -38,9 +38,9 @@ def posts(request):
         previous_page = get_link(page-1, search)
     if page < pages:
         next_page = get_link(page+1, search)
-    pages_links = {x+1: get_link(x+1, search) for x in range(pages)}
+    pages_links = {x+1: {"link": get_link(x+1, search), "disabled": False} for x in range(pages)}
     if page in pages_links:
-        del pages_links[page]
+        pages_links[page]["disabled"] = True
     return render(
         request,
         'posts.html',
