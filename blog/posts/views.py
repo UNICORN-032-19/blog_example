@@ -86,3 +86,33 @@ def posts_new(request):
         )
     else:
         return HttpResponseNotAllowed()
+
+
+def post_view(request, id):
+    post = Post.objects.get(pk=id)
+    return render(
+        request,
+        'post_view.html',
+        context={"post": post}
+    )
+
+
+def post_edit(request, id):
+    post = Post.objects.get(pk=id)
+    if request.method == "GET":
+        return render(
+            request,
+            'post_edit.html',
+            context={"post": post}
+        )
+    elif request.method == "POST":
+        title = request.POST.get("title")
+        text = request.POST.get("text")
+        author = request.POST.get("author")
+        post.title = title
+        post.text = text
+        post.author = author
+        post.save()
+        return redirect("post-view", id=post.id)
+    else:
+        return HttpResponseNotAllowed()

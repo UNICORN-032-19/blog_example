@@ -1,0 +1,13 @@
+{% extends "_base.html" %}
+
+{% block title %}Read More Post{% endblock %}
+
+{% block content %}
+    <h1>
+        {{ post.title }}
+        <a href="{% url 'post-edit' post.id %}" class="btn btn-sm btn-outline-success">edit</a>
+    </h1>
+    <p>{{ post.text }}</p>
+    <br/>
+    <h4>Author: {{ post.author }}</h4>
+{% endblock %}

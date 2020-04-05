@@ -10,7 +10,7 @@
       <div class="card-body">
         <h5 class="card-title">{{ post.title }}</h5>
         <p class="card-text">{{ post.text }}</p>
-        <a href="#" class="btn btn-success">Read More</a>
+        <a href="{% url 'post-view' post.id %}" class="btn btn-success">Read More</a>
       </div>
     </div>
 	{% endfor %}
