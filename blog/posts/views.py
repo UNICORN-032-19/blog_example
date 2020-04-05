@@ -3,6 +3,8 @@ from blog.posts.models import Post
 from django.http import HttpResponseNotAllowed
 import math
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
+from blog.posts.forms import PostForm, EditPostForm
+from datetime import datetime
 
 DEFAULT_LIMIT = 1
 DEFAULT_OFFSET = 0
@@ -64,25 +66,23 @@ def posts(request):
 
 
 def posts_new(request):
+    base_context = {"new_post": PostForm()}
     if request.method == "GET":
         return render(
             request,
             'posts_new.html',
-            context={}
+            context=dict(**base_context, **{})
         )
     elif request.method == "POST":
-        title = request.POST.get("title")
-        text = request.POST.get("text")
-        author = request.POST.get("author")
-        post = Post.objects.create(title=title, text=text, author=author)
-        post.save()
+        form = PostForm(request.POST)
+        post = form.save()
         return render(
             request,
             'posts_new.html',
-            context={
+            context=dict(**base_context, **{
                 "message": f"New post {post.title} by {post.author} created",
                 "message_type": "success",
-            }
+            })
         )
     else:
         return HttpResponseNotAllowed()
@@ -99,19 +99,17 @@ def post_view(request, id):
 
 def post_edit(request, id):
     post = Post.objects.get(pk=id)
+    form = EditPostForm(instance=post)
     if request.method == "GET":
         return render(
             request,
             'post_edit.html',
-            context={"post": post}
+            context={"form": form}
         )
     elif request.method == "POST":
-        title = request.POST.get("title")
-        text = request.POST.get("text")
-        author = request.POST.get("author")
-        post.title = title
-        post.text = text
-        post.author = author
+        form = PostForm(request.POST)
+        post = form.save()
+        post.updated_at = datetime.now()
         post.save()
         return redirect("post-view", id=post.id)
     else:

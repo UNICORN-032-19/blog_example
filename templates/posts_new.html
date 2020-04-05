@@ -1,4 +1,5 @@
 {% extends "_base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}Add New Post{% endblock %}
 
@@ -8,20 +9,6 @@
           {{ message }}
         </div>
     {% endif %}
-    <form action="/posts/new" method="post">{% csrf_token %}
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" class="form-control" id="title" name="title" placeholder="Enter Title" required>
-        </div>
-        <div class="form-group">
-            <label for="text">Text</label>
-            <textarea type="text" class="form-control" id="text" name="text" placeholder="Enter Post Text..." rows="7" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="author">Author</label>
-            <input type="text" class="form-control" id="author" name="author" placeholder="Enter Author">
-        </div>
-        <button type="submit" class="btn btn-primary">Publicate</button>
-    </form>
+    {% crispy new_post new_post.helper %}
 
 {% endblock %}
