@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from blog.posts.models import Post
+from django.http import HttpResponseNotAllowed
 import math
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 
@@ -12,6 +13,14 @@ def get_link(page, search):
     if search:
         result = f"{result}&q={search}"
     return result
+
+
+def home(request):
+    return render(
+        request,
+        'home.html',
+        context={}
+    )
 
 
 def posts(request):
@@ -52,3 +61,28 @@ def posts(request):
             "pages_links": pages_links,
         }
     )
+
+
+def posts_new(request):
+    if request.method == "GET":
+        return render(
+            request,
+            'posts_new.html',
+            context={}
+        )
+    elif request.method == "POST":
+        title = request.POST.get("title")
+        text = request.POST.get("text")
+        author = request.POST.get("author")
+        post = Post.objects.create(title=title, text=text, author=author)
+        post.save()
+        return render(
+            request,
+            'posts_new.html',
+            context={
+                "message": f"New post {post.title} by {post.author} created",
+                "message_type": "success",
+            }
+        )
+    else:
+        return HttpResponseNotAllowed()
