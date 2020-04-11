@@ -9,5 +9,8 @@
     </h1>
     <p>{{ post.text }}</p>
     <br/>
-    <h4>Author: {{ post.author }} at {{  post.updated_at }}</h4>
+    <h4>Created by: {{ post.create_uid.username }} at {{  post.created_at }}</h4>
+    {% if post.update_uid %}
+    <h4>Updated by: {{ post.update_uid.username }} at {{  post.updated_at }}</h4>
+    {% endif %}
 {% endblock %}

@@ -3,5 +3,13 @@
 {% block title %}Add New Post{% endblock %}
 
 {% block content %}
-    Home
+
+    </br>
+    {% if user.is_authenticated %}
+        <p>Hello, {{ user.username }}.</p>
+    {% else %}
+        <p>Hello, you don't authenticated, please <a href="{% url 'user_login' %}">login</a>.</p>
+    {% endif %}
+    </br>
+
 {% endblock %}

@@ -9,7 +9,7 @@ from django.urls import reverse
 class PostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ['title', 'text', 'author']
+        fields = ['title', 'text']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

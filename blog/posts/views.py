@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, redirect
 from blog.posts.models import Post
 from django.http import HttpResponseNotAllowed
@@ -6,7 +8,7 @@ from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 from blog.posts.forms import PostForm, EditPostForm
 from datetime import datetime
 
-DEFAULT_LIMIT = 1
+DEFAULT_LIMIT = 5
 DEFAULT_OFFSET = 0
 
 
@@ -25,6 +27,7 @@ def home(request):
     )
 
 
+@login_required
 def posts(request):
     search = request.GET.get("q")
     page = request.GET.get("page")
@@ -65,6 +68,8 @@ def posts(request):
     )
 
 
+@login_required
+@permission_required('posts.can_create_post')
 def posts_new(request):
     base_context = {"new_post": PostForm()}
     if request.method == "GET":
@@ -76,6 +81,9 @@ def posts_new(request):
     elif request.method == "POST":
         form = PostForm(request.POST)
         post = form.save()
+        if request.user.is_authenticated:
+            post.create_uid = request.user
+            post.save()
         return render(
             request,
             'posts_new.html',
@@ -88,6 +96,7 @@ def posts_new(request):
         return HttpResponseNotAllowed()
 
 
+@login_required
 def post_view(request, id):
     post = Post.objects.get(pk=id)
     return render(
@@ -97,6 +106,7 @@ def post_view(request, id):
     )
 
 
+@login_required
 def post_edit(request, id):
     post = Post.objects.get(pk=id)
     form = EditPostForm(instance=post)
@@ -107,9 +117,15 @@ def post_edit(request, id):
             context={"form": form}
         )
     elif request.method == "POST":
+        create_uid = post.create_uid
+        created_at = post.created_at
         form = PostForm(request.POST)
         post = form.save()
         post.updated_at = datetime.now()
+        if request.user.is_authenticated:
+            post.update_uid = request.user
+        post.create_uid = create_uid
+        post.created_at = created_at
         post.save()
         return redirect("post-view", id=post.id)
     else:
